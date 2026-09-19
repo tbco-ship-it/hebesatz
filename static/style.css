@@ -672,3 +672,4 @@ details.src summary{cursor:pointer;color:var(--text-2);font-weight:600;font-size
 .sheet-num .num.rate-value{font-size:inherit}
 .override{margin-top:12px}.override summary{cursor:pointer;color:var(--link);font-size:.9rem;font-weight:600}.override .field{margin-top:8px}
 .menu li small.kreis{display:block;color:var(--muted);font-size:.8rem}
+.sheet-num .num.num-txt{font-size:1.5rem;line-height:1.2;padding-top:6px}

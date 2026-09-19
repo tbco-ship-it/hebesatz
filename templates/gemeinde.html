@@ -10,7 +10,7 @@
 <section class="sheet quiet" data-b="{{ '' if g.diff_possible else g.b }}">
   <p class="sheet-label">{{ g.name }}{% if g.suffix %}, {{ g.suffix }}{% endif %} · {% if g.kreis_name and g.kreis_name != g.name %}{{ g.kreis_type }} {{ g.kreis_name }} · {% endif %}{{ L.name }}{% if g.ew %} · {{ g.ew|de }} Einwohner <span class="muted">(Stand {{ g.ew_stand }})</span>{% endif %}</p>
   {% if g.diff_possible %}
-  <div class="sheet-num"><span class="num">Wohnen / Nichtwohnen</span><span class="pct">Grundsteuer B 2025</span></div>
+  <div class="sheet-num"><span class="num num-txt">Wohnen / Nichtwohnen</span><span class="pct">Grundsteuer B 2025</span></div>
   <p class="sheet-title">Getrennte Hebesätze wahrscheinlich — bitte im Bescheid nachsehen</p>
   <p class="data-warning">{{ g.name }} hat für 2025 die Grundsteuer A neu festgesetzt, meldet aber keinen einheitlichen Grundsteuer-B-Satz. In Nordrhein-Westfalen dürfen Gemeinden seit 2025 für Wohn- und Nichtwohngrundstücke unterschiedliche Hebesätze beschließen (§ 25 Abs. 5 GrStG); solche Sätze kann die amtliche Tabelle nicht abbilden. Bis 2024 galten {{ g.b2024|de }} %. Für die Berechnung tragen Sie den Hebesatz aus Ihrem Grundsteuerbescheid ein.</p>
   {% else %}
