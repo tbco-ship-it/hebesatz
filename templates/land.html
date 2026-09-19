@@ -1,18 +1,19 @@
 {% extends "base.html" %}
-{% block title %}Hebesätze Grundsteuer B in {{ L.name }} 2025 — alle {{ L.gem|length }} Gemeinden, Median {{ L.med }} % | {{ site }}{% endblock %}
-{% block description %}Grundsteuer-B-Hebesatz aller {{ L.gem|length }} Gemeinden in {{ L.name }}: von {{ L.min.b }} % ({{ L.min.name }}) bis {{ L.max.b }} % ({{ L.max.name }}), Median {{ L.med }} %, einwohnergewichtet {{ L.pw }} %. {{ L.n_changed }} Gemeinden haben den Satz im 1. Halbjahr 2025 geändert. Modell: {{ L.modell }}.{% endblock %}
+{% block title %}Grundsteuer B in {{ L.name }} 2025: Hebesätze aller {{ L.gem|length }} Gemeinden, Median {{ L.med|de }} % | {{ site }}{% endblock %}
+{% block description %}Grundsteuer-B-Hebesätze in {{ L.name }}, Datenstand 30.06.2025: von {{ L.min.b|de }} % ({{ L.min.name }}) bis {{ L.max.b|de }} % ({{ L.max.name }}), Median {{ L.med|de }} %. {{ L.n_changed }} Gemeinden haben den Satz zur Reform 2025 geändert. Modell: {{ L.modell }}.{% endblock %}
 {% block content %}
 <nav class="crumbs"><a href="{{ base }}">Start</a> › <a href="{{ base }}bundeslaender/">Bundesländer</a> › {{ L.name }}</nav>
 <h1>Hebesätze in {{ L.name }}</h1>
 <section class="sheet quiet">
-  <p class="sheet-label">{{ L.name }} · {{ L.gem|length }} Gemeinden · {{ L.modell }}</p>
-  <div class="sheet-num"><span class="num">{{ L.med }} %</span><span class="pct">Median Grundsteuer B</span></div>
-  <p class="sheet-title">Von {{ L.min.b }} % ({{ L.min.name }}) bis {{ L.max.b }} % ({{ L.max.name }}) · einwohnergewichtet {{ L.pw }} %</p>
-  <p class="sheet-text">{{ L.n_changed }} Gemeinden haben den Hebesatz im 1. Halbjahr 2025 geändert. Bundesweiter Median {{ de_med }} %.</p>
+  <p class="sheet-label">{{ L.name }} · {{ L.gem|length }} {{ 'Gemeinde' if L.gem|length == 1 else 'Gemeinden' }} · {{ L.modell }}</p>
+  <div class="sheet-num"><span class="num rate-value">{{ L.med|de }} %</span><span class="pct">Median Grundsteuer B 2025</span></div>
+  <p class="sheet-title">Von {{ L.min.b|de }} % ({{ L.min.name }}) bis {{ L.max.b|de }} % ({{ L.max.name }}) · einwohnergewichtet {{ L.pw|de }} %</p>
+  <p class="sheet-text">{{ L.n_changed }} Gemeinden haben den Hebesatz zur Reform 2025 geändert{% if L.n_diff %}, {{ L.n_diff }} setzen voraussichtlich getrennte Sätze für Wohn- und Nichtwohngrundstücke (nicht in der Tabelle){% endif %}. Bundesweiter Median {{ de_med|de }} %. Datenstand 30.06.2025.</p>
+  <p class="data-note">Einwohnergewichtung mit der Bevölkerung zum 31.12.2024 (eigene Berechnung). Verglichen werden Hebesätze, nicht individuelle Steuerbeträge; verschiedene Bewertungsmodelle und Messbeträge begrenzen die Vergleichbarkeit.</p>
 </section>
 <div class="ad-slot"><!-- ad: land --></div>
 {% if L.big %}<div class="sec"><div class="sec-h"><h2>Städte ab 20.000 Einwohner</h2></div>
-<ul class="list fee">{% for g in L.big %}<li><a href="{{ base }}{{ g.path }}"><span class="nm">{{ g.name }}<small class="rule">{{ '{:,}'.format(g.ew).replace(',', '.') }} Einwohner{% if g.changed_2025 and g.b2024 %} · {{ g.b2024 }} → {{ g.b2025 }} %{% endif %}</small></span><span class="meta"><b>{{ g.b }} %</b></span></a></li>{% endfor %}</ul></div>{% endif %}
+<ul class="list fee">{% for g in L.big %}<li><a href="{{ base }}{{ g.path }}"><span class="nm">{{ g.name }}<small class="rule">{{ g.ew|de }} Einwohner{% if g.diff_possible %} · Wohnen/Nichtwohnen getrennt{% elif g.changed_2025 %} · {{ g.b2024|de }} → {{ g.b2025|de }} %{% endif %}</small></span><span class="meta"><b>{% if g.diff_possible %}–{% else %}{{ g.b|de }} %{% endif %}</b></span></a></li>{% endfor %}</ul></div>{% endif %}
 <div class="sec"><div class="sec-h"><h2>Alle Gemeinden, höchster Hebesatz zuerst</h2></div>
-<ul class="list fee">{% for g in L.gem %}<li><a href="{{ base }}{{ g.path }}"><span class="nm">{{ g.name }}{% if g.suffix %} <small>{{ g.suffix }}</small>{% endif %}</span><span class="meta"><b>{{ g.b }} %</b>{% if g.changed_2025 and g.b2024 %}<small>vorher {{ g.b2024 }}</small>{% endif %}</span></a></li>{% endfor %}</ul></div>
+<ul class="list fee">{% for g in L.gem %}<li><a href="{{ base }}{{ g.path }}"><span class="nm">{{ g.name }}{% if g.suffix %} <small>{{ g.suffix }}</small>{% endif %}</span><span class="meta"><b>{% if g.diff_possible %}–{% else %}{{ g.b|de }} %{% endif %}</b>{% if g.diff_possible %}<small>getrennt</small>{% elif g.changed_2025 %}<small>vorher {{ g.b2024|de }}</small>{% endif %}</span></a></li>{% endfor %}</ul></div>
 {% endblock %}

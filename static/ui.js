@@ -2,7 +2,8 @@
 // __reveal(root, force, base): arm root's direct block children; force=true also animates blocks already in view (used after the first result on the home page).
 (function () {
   const hdr = document.querySelector('header.top');
-  if (hdr) document.documentElement.style.setProperty('--hdr', hdr.offsetHeight + 'px');
+  const setHdr = () => document.documentElement.style.setProperty('--hdr', hdr.offsetHeight + 'px');
+  if (hdr) { setHdr(); if ('ResizeObserver' in window) new ResizeObserver(setHdr).observe(hdr); }
   if (matchMedia('(prefers-reduced-motion: reduce)').matches || !('IntersectionObserver' in window)) return;
   const SEL = ':scope > section:not(:first-of-type), :scope > .grid2, :scope > h2, :scope > .tbl, :scope > .prose, :scope > .sec, :scope > .sheet:not(:first-of-type), :scope > .week, :scope > .legend, :scope > .card, :scope > .list';
   const io = new IntersectionObserver(entries => {

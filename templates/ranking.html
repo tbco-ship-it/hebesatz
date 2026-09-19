@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% block title %}{{ title }} | {{ site }}{% endblock %}
-{% block description %}{{ title }}, aus den amtlichen Realsteuerhebesätzen (Stand 31.12.2024 / 30.06.2025).{% endblock %}
+{% block description %}{{ title }}, aus den amtlichen Realsteuerhebesätzen, Datenstand 30.06.2025.{% endblock %}
 {% block content %}
 <nav class="crumbs"><a href="{{ base }}">Start</a> › Ranking</nav>
 <h1>{{ title }}</h1>
-<p class="prose">Bundesweiter Median {{ de_med }} %. Hebesätze sind nur innerhalb desselben Grundsteuermodells vergleichbar. Weitere Listen: <a href="{{ base }}ranking/grossstaedte/">Großstädte</a> · <a href="{{ base }}ranking/hoechste/">höchste</a> · <a href="{{ base }}ranking/niedrigste/">niedrigste</a> · <a href="{{ base }}ranking/erhoehungen-2025/">Erhöhungen 2025</a>.</p>
+<p class="prose">Bundesweiter Median {{ de_med|de }} %, Datenstand 30.06.2025.{% if kind == 'up' %} Sortiert nach Anstieg des Hebesatzes in Prozentpunkten — das ist nicht die Steigerung der Steuer, weil sich 2025 auch die Messbeträge geändert haben.{% endif %} Verglichen werden Hebesätze, nicht individuelle Steuerbeträge; verschiedene Bewertungsmodelle begrenzen die Vergleichbarkeit. Gemeinden mit voraussichtlich getrennten Wohn-/Nichtwohn-Sätzen (NRW) sind nicht enthalten. Weitere Listen: <a href="{{ base }}ranking/grossstaedte/">Großstädte</a> · <a href="{{ base }}ranking/hoechste/">höchste</a> · <a href="{{ base }}ranking/niedrigste/">niedrigste</a> · <a href="{{ base }}ranking/erhoehungen-2025/">Erhöhungen 2025</a>.</p>
 <div class="ad-slot"><!-- ad: ranking --></div>
-<ul class="list fee">{% for g in rows %}<li><a href="{{ base }}{{ g.path }}"><span class="nm">{{ loop.index }}. {{ g.name }}<small class="rule">{{ g.land }}{% if g.ew %} · {{ '{:,}'.format(g.ew).replace(',', '.') }} Einwohner{% endif %}</small></span><span class="meta"><b>{{ g.b }} %</b>{% if g.changed_2025 and g.b2024 %}<small>{{ g.b2024 }} → {{ g.b2025 }}</small>{% endif %}</span></a></li>{% endfor %}</ul>
+<ul class="list fee">{% for g in rows %}<li><a href="{{ base }}{{ g.path }}"><span class="nm">{{ loop.index }}. {{ g.name }}<small class="rule">{{ g.land }}{% if g.ew %} · {{ g.ew|de }} Einwohner{% endif %}</small></span><span class="meta"><b>{{ g.b|de }} %</b>{% if g.changed_2025 %}<small>{{ g.b2024|de }} → {{ g.b2025|de }}{% if kind == 'up' %} (+{{ g.b2025 - g.b2024 }}){% endif %}</small>{% endif %}</span></a></li>{% endfor %}</ul>
 {% endblock %}

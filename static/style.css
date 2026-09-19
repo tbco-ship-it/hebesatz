@@ -655,3 +655,20 @@ header.top nav a{flex:none}
 .sheet.quiet{background:var(--surface);background-image:none}
 details.src summary{cursor:pointer;color:var(--text-2);font-weight:600;font-size:.92rem}
 @media (max-width:430px){.list.fee a{grid-template-columns:minmax(0,1fr) minmax(96px,120px)}.list.fee .meta{white-space:normal}}
+/* Review 2026-09-19: accessible contrast for text links and primary buttons (4.5:1 on white / dark), data-state notes, rate formatting, override field */
+:root{--link:#1764c0;--btn:#1b64da}
+@media (prefers-color-scheme:dark){:root{--link:#8abaff;--btn:#3182f6}}
+.prose a,.sheet-text a,footer a,.sec-h a,.muted a,.data-note a{color:var(--link)}
+.next:first-child:not(:only-child),.next:only-child{background:var(--btn);color:#fff}
+.next:first-child:not(:only-child):hover,.next:only-child:hover{background:var(--blue-press)}
+.money:focus-within{outline:3px solid var(--link);outline-offset:3px;box-shadow:none}
+.num-in[aria-invalid="true"]{border-color:#d92d20}
+.rate-value{white-space:nowrap;font-variant-numeric:tabular-nums}
+.rate-date{display:block;margin-top:4px;font-size:.8125rem;line-height:1.4;color:var(--muted)}
+.tbl th,.tbl td{vertical-align:top}
+.data-note{margin:10px 0 0;padding:10px 12px;border-radius:12px;background:var(--surface-2);color:var(--text-2);font-size:.9rem;line-height:1.5}
+.data-warning{margin:10px 0 0;padding:12px 14px;border-radius:12px;background:#fff4e5;color:#7a3b00;font-size:.95rem;line-height:1.5}
+@media (prefers-color-scheme:dark){.data-warning{background:#3a2a10;color:#ffd9a8}}
+.sheet-num .num.rate-value{font-size:inherit}
+.override{margin-top:12px}.override summary{cursor:pointer;color:var(--link);font-size:.9rem;font-weight:600}.override .field{margin-top:8px}
+.menu li small.kreis{display:block;color:var(--muted);font-size:.8rem}

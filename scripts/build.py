@@ -6,6 +6,7 @@ import hashlib
 import json
 import shutil
 from collections import defaultdict
+from statistics import median
 from pathlib import Path
 from xml.sax.saxutils import escape
 
@@ -34,6 +35,7 @@ def main():
     origin = args.origin.rstrip("/")
     today = dt.date.today()
 
+    operator = json.loads((ROOT / "data/operator.json").read_text())
     d = json.loads((ROOT / "data/gemeinden.json").read_text())
     gem, source, modell = d["gemeinden"], d["source"], d["modell"]
     laender = {}
@@ -41,18 +43,19 @@ def main():
         g["path"] = f"{g['land_slug']}/{g['slug']}/"
         L = laender.setdefault(g["land_code"], {"code": g["land_code"], "name": g["land"], "slug": g["land_slug"], "path": f"{g['land_slug']}/", "gem": [], "modell": modell.get(g["land_code"], "Bundesmodell")})
         L["gem"].append(g)
-    allb = sorted(g["b"] for g in gem)
-    de_med = allb[len(allb) // 2]
+    de_med = round(median(g["b"] for g in gem))
     for L in laender.values():
         L["gem"].sort(key=lambda g: -g["b"])
-        vals = sorted(g["b"] for g in L["gem"])
-        L["med"] = vals[len(vals) // 2]
+        L["med"] = round(median(g["b"] for g in L["gem"]))
         L["min"], L["max"] = L["gem"][-1], L["gem"][0]
         L["n_changed"] = sum(1 for g in L["gem"] if g["changed_2025"])
+        L["n_diff"] = sum(1 for g in L["gem"] if g["diff_possible"])
         big = [g for g in L["gem"] if (g["ew"] or 0) >= 20000]
         L["big"] = big
+        rank_by_rate = {}  # equal Hebesätze share a rank (1224 style)
         for i, g in enumerate(L["gem"]):
-            g["rank_land"], g["n_land"] = i + 1, len(L["gem"])
+            rank_by_rate.setdefault(g["b"], i + 1)
+            g["rank_land"], g["n_land"] = rank_by_rate[g["b"]], len(L["gem"])
         # pop-weighted mean for the Land
         pw = [(g["b"], g["ew"]) for g in L["gem"] if g["ew"]]
         L["pw"] = round(sum(b * p for b, p in pw) / max(1, sum(p for _, p in pw)))
@@ -60,10 +63,11 @@ def main():
     by_kreis = defaultdict(list)
     for g in gem:
         by_kreis[g["kreis"]].append(g)
-    big_all = sorted([g for g in gem if (g["ew"] or 0) >= 20000], key=lambda g: -g["b"])
-    cities100 = sorted([g for g in gem if (g["ew"] or 0) >= 100000], key=lambda g: -g["b"])
-    lowest = sorted([g for g in gem if (g["ew"] or 0) >= 20000], key=lambda g: g["b"])[:100]
-    changed = sorted([g for g in gem if g["changed_2025"] and g["b2024"]], key=lambda g: -(g["b2025"] - g["b2024"]))
+    cmp = [g for g in gem if not g["diff_possible"]]  # rankings only over Gemeinden with one comparable B rate
+    big_all = sorted([g for g in cmp if (g["ew"] or 0) >= 20000], key=lambda g: -g["b"])
+    cities100 = sorted([g for g in cmp if (g["ew"] or 0) >= 100000], key=lambda g: -g["b"])
+    lowest = sorted([g for g in cmp if (g["ew"] or 0) >= 20000], key=lambda g: g["b"])[:100]
+    changed = sorted([g for g in cmp if g["changed_2025"] and g["b2024"]], key=lambda g: -(g["b2025"] - g["b2024"]))
 
     h = hashlib.md5()
     for f in sorted((ROOT / "static").glob("*")):
@@ -72,14 +76,15 @@ def main():
     v = h.hexdigest()[:8]
     env = Environment(loader=FileSystemLoader(ROOT / "templates"), autoescape=select_autoescape(["html"]))
     env.filters["de"] = de
-    env.globals.update(site=SITE, base=base, origin=origin, today=today.isoformat(), v=v, adsense_pub=args.adsense_pub, source=source, laender=laender, land_list=land_list,
-                       n_gem=len(gem), de_med=de_med, n_changed=sum(1 for g in gem if g["changed_2025"]))
+    env.globals.update(site=SITE, base=base, origin=origin, today=today.isoformat(), legal_date=operator.get("legal_date", today.isoformat()), operator=operator, v=v, adsense_pub=args.adsense_pub, source=source, laender=laender, land_list=land_list,
+                       n_gem=len(gem), de_med=de_med, n_changed=sum(1 for g in gem if g["changed_2025"]), n_reported=sum(1 for g in gem if g["reported_2025"]), n_diff=sum(1 for g in gem if g["diff_possible"]))
 
     if DIST.exists():
         shutil.rmtree(DIST)
     DIST.mkdir()
     shutil.copytree(ROOT / "static", DIST / "static")
-    items = [[g["name"], g["land_code"], g["slug"], g["b"], g["b2024"], g["ew"], 1 if g["changed_2025"] else 0, g["gew2025"] or g["gew2022"]] for g in gem]
+    # status: 1 = H1-2025 value reported, 0 = 31.12.2024 value unchanged, 2 = NRW, separate Wohn/Nichtwohn rates likely (not in the table)
+    items = [[g["name"], g["land_code"], g["slug"], g["b"], g["b2024"], g["ew"], 2 if g["diff_possible"] else 1 if g["reported_2025"] else 0, g["kreis_name"], g["ags"]] for g in gem]
     (DIST / "static/index.json").write_text(json.dumps({"laender": {L["code"]: [L["name"], L["slug"], L["med"]] for L in laender.values()}, "de_med": de_med, "items": items}, ensure_ascii=False, separators=(",", ":")))
 
     urls = []
@@ -97,7 +102,7 @@ def main():
     write("ranking/grossstaedte/", "ranking.html", title="Grundsteuer B Hebesatz 2025 in den Großstädten (ab 100.000 Einwohner)", rows=cities100, kind="cities")
     write("ranking/hoechste/", "ranking.html", title="Die höchsten Grundsteuer-B-Hebesätze Deutschlands (Gemeinden ab 20.000 Einwohner)", rows=big_all[:100], kind="high")
     write("ranking/niedrigste/", "ranking.html", title="Die niedrigsten Grundsteuer-B-Hebesätze Deutschlands (Gemeinden ab 20.000 Einwohner)", rows=lowest, kind="low")
-    write("ranking/erhoehungen-2025/", "ranking.html", title="Die stärksten Hebesatz-Erhöhungen zur Grundsteuerreform 2025", rows=changed[:100], kind="up")
+    write("ranking/erhoehungen-2025/", "ranking.html", title="Die stärksten Anstiege des Grundsteuer-B-Hebesatzes zur Reform 2025 (in Prozentpunkten)", rows=changed[:100], kind="up")
     write("ratgeber/grundsteuerreform-2025/", "guide_reform.html")
     write("ratgeber/grundsteuer-berechnen/", "guide_calc.html")
     write("ratgeber/einspruch/", "guide_einspruch.html")

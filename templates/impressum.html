@@ -1,3 +1,14 @@
 {% extends "base.html" %}
 {% block title %}Impressum | {{ site }}{% endblock %}
-{% block content %}<h1>Impressum</h1><div class="prose"><p>Angaben gemäß § 5 DDG folgen mit dem Umzug auf die eigene Domain. Bis dahin erreichen Sie uns über die <a href="{{ base }}kontakt/">Kontaktseite</a>.</p><p>Die Inhalte dienen der allgemeinen Information und ersetzen keine steuerliche Beratung. Maßgeblich sind die Hebesatzsatzung Ihrer Gemeinde und Ihre Bescheide.</p></div>{% endblock %}
+{% block content %}<h1>Impressum</h1><div class="prose">
+<h2>Angaben zum Anbieter (§ 5 DDG)</h2>
+<p>{{ operator.name }}<br>{{ operator.address|replace('\n', '<br>')|safe }}</p>
+<p>E-Mail: <a href="mailto:{{ operator.email }}">{{ operator.email }}</a></p>
+{% if operator.vat %}<p>Umsatzsteuer-Identifikationsnummer: {{ operator.vat }}</p>{% endif %}
+<h2>Verantwortlich für den Inhalt</h2>
+<p>{{ operator.responsible or operator.name }}, Anschrift wie oben.</p>
+<h2>Haftung für Inhalte</h2>
+<p>Die Inhalte dienen der allgemeinen Information und ersetzen keine steuerliche oder rechtliche Beratung. Die Hebesätze stammen aus amtlichen Statistiken und werden ohne Gewähr wiedergegeben; maßgeblich sind die Hebesatzsatzung Ihrer Gemeinde und Ihre Bescheide. Für Korrekturen nutzen Sie bitte die <a href="{{ base }}kontakt/">Kontaktseite</a>.</p>
+<h2>Streitbeilegung</h2>
+<p>Wir sind nicht bereit und nicht verpflichtet, an Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>
+</div>{% endblock %}
