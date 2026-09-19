@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block title %}Hebesatz Grundsteuer B 2025 nach Gemeinde — alle {{ '{:,}'.format(n_gem).replace(',', '.') }} Gemeinden, Reform-Änderungen & Rechner | {{ site }}{% endblock %}
+{% block head %}<script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"{{ site }}","applicationCategory":"FinanceApplication","inLanguage":"de","url":"{{ origin }}{{ base }}","offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"}}</script>
+<script>document.documentElement.classList.add('landing')</script>{% endblock %}
+{% block content %}
+<div class="stage" id="stage">
+<section class="hero">
+  <h1>Wie hoch ist der Hebesatz in meiner Gemeinde?</h1>
+  <p>Gemeinde eingeben — Sie sehen den aktuellen Grundsteuer-B-Hebesatz, ob er zur Grundsteuerreform 2025 geändert wurde, wo die Gemeinde im Bundesland steht, und was Ihr Messbetrag damit an Grundsteuer ergibt. Alle {{ '{:,}'.format(n_gem).replace(',', '.') }} Gemeinden, amtliche Daten.</p>
+</section>
+
+<section class="calc-grid">
+<div class="calc card" id="calc">
+  <h2 class="card-title">Ihre Gemeinde</h2>
+  <div class="field"><label for="q">Gemeinde oder Stadt</label>
+    <input id="q" class="pick search" type="text" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="q-menu" autocomplete="off" placeholder="z. B. Köln, Neuss, Bad Homburg"><ul class="menu" id="q-menu" role="listbox" hidden></ul>
+  </div>
+  <p id="search-status" role="status" class="muted small" hidden></p>
+  <label class="field">Grundsteuermessbetrag <span class="muted small">(optional, steht im Messbescheid)</span>
+    <div class="money"><span class="unit">€</span><input id="mb" class="num-in" type="text" inputmode="decimal" placeholder="z. B. 85,20"></div>
+  </label>
+  <p class="muted small">Jahresgrundsteuer = Messbetrag × Hebesatz ÷ 100. <a href="{{ base }}ratgeber/grundsteuer-berechnen/">So lesen Sie Ihren Bescheid</a></p>
+  <button type="button" class="last" id="last" hidden><span>Zuletzt gesucht</span><b id="last-name"></b></button>
+</div>
+<div id="result" class="result" aria-live="polite"></div>
+</section>
+</div>
+
+<div class="below" id="below">
+<div class="ad-slot"><!-- ad: home --></div>
+
+<section class="grid2">
+  <div class="sec">
+    <div class="sec-h"><h2>Großstädte, höchster Hebesatz zuerst</h2><a href="{{ base }}ranking/grossstaedte/">Alle Großstädte</a></div>
+    <ul class="list">{% for g in top %}<li><a href="{{ base }}{{ g.path }}">{{ g.name }}<span class="meta">{{ g.b }} %</span></a></li>{% endfor %}</ul>
+  </div>
+  <div class="sec">
+    <div class="sec-h"><h2>Stärkste Erhöhungen 2025</h2><a href="{{ base }}ranking/erhoehungen-2025/">Top 100</a></div>
+    <ul class="list">{% for g in up %}<li><a href="{{ base }}{{ g.path }}">{{ g.name }}<span class="meta">{{ g.b2024 }} → {{ g.b2025 }} %</span></a></li>{% endfor %}</ul>
+  </div>
+</section>
+
+<div class="sec"><div class="sec-h"><h2>Nach Bundesland</h2><a href="{{ base }}bundeslaender/">Alle 16 im Vergleich</a></div>
+<ul class="list">{% for L in land_list %}<li><a href="{{ base }}{{ L.path }}">{{ L.name }}<span class="meta">Median {{ L.med }} % · {{ L.gem|length }} Gemeinden</span></a></li>{% endfor %}</ul></div>
+
+<section class="prose">
+  <h2>Warum der Hebesatz 2025 alles entscheidet</h2>
+  <p>Seit dem 1. Januar 2025 gilt die neue Grundsteuer. Das Finanzamt hat für jedes Grundstück einen neuen Grundsteuermessbetrag festgesetzt; die Gemeinde multipliziert ihn mit ihrem Hebesatz. Weil die neuen Messbeträge im Schnitt deutlich niedriger (Bundesmodell) oder höher (Flächenmodelle) ausfallen als früher, mussten fast alle Gemeinden ihren Hebesatz neu festlegen — viele haben ihn drastisch angehoben, um „aufkommensneutral“ zu bleiben. Ein Hebesatz von 900 % ist deshalb 2025 nicht automatisch teurer als 500 % im Jahr 2024. Der Median über alle Gemeinden liegt aktuell bei {{ de_med }} %. <a href="{{ base }}ratgeber/grundsteuerreform-2025/">Die Reform in fünf Minuten</a></p>
+  <h2>Was Sie hier sehen</h2>
+  <p>Für jede Gemeinde: den Hebesatz nach Stand 31.12.2024 und, falls im ersten Halbjahr 2025 geändert, den neuen Satz ({{ '{:,}'.format(n_changed).replace(',', '.') }} Gemeinden), dazu Grundsteuer A und Gewerbesteuer, den Rang im Bundesland und die Nachbargemeinden im Kreis. Datenstand und Quelle stehen auf jeder Seite. <a href="{{ base }}methodik/">Methodik</a></p>
+</section>
+</div>
+<script src="{{ base }}static/app.js?v={{ v }}" defer></script>
+{% endblock %}

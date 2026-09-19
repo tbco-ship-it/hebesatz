@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | {{ site }}{% endblock %}
+{% block description %}{{ title }}, aus den amtlichen Realsteuerhebesätzen (Stand 31.12.2024 / 30.06.2025).{% endblock %}
+{% block content %}
+<nav class="crumbs"><a href="{{ base }}">Start</a> › Ranking</nav>
+<h1>{{ title }}</h1>
+<p class="prose">Bundesweiter Median {{ de_med }} %. Hebesätze sind nur innerhalb desselben Grundsteuermodells vergleichbar. Weitere Listen: <a href="{{ base }}ranking/grossstaedte/">Großstädte</a> · <a href="{{ base }}ranking/hoechste/">höchste</a> · <a href="{{ base }}ranking/niedrigste/">niedrigste</a> · <a href="{{ base }}ranking/erhoehungen-2025/">Erhöhungen 2025</a>.</p>
+<div class="ad-slot"><!-- ad: ranking --></div>
+<ul class="list fee">{% for g in rows %}<li><a href="{{ base }}{{ g.path }}"><span class="nm">{{ loop.index }}. {{ g.name }}<small class="rule">{{ g.land }}{% if g.ew %} · {{ '{:,}'.format(g.ew).replace(',', '.') }} Einwohner{% endif %}</small></span><span class="meta"><b>{{ g.b }} %</b>{% if g.changed_2025 and g.b2024 %}<small>{{ g.b2024 }} → {{ g.b2025 }}</small>{% endif %}</span></a></li>{% endfor %}</ul>
+{% endblock %}

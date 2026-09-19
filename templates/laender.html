@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Hebesätze Grundsteuer B nach Bundesland 2025 — Median, Spanne und Reform-Modell | {{ site }}{% endblock %}
+{% block description %}Alle 16 Bundesländer im Vergleich: Median und einwohnergewichteter Grundsteuer-B-Hebesatz, niedrigste und höchste Gemeinde, Zahl der Änderungen zur Reform 2025 und das jeweilige Grundsteuermodell.{% endblock %}
+{% block content %}
+<nav class="crumbs"><a href="{{ base }}">Start</a> › Bundesländer</nav>
+<h1>Hebesätze nach Bundesland</h1>
+<p class="prose">Achtung beim Ländervergleich: Bayern, Hamburg, Niedersachsen, Hessen und Baden-Württemberg bewerten Grundstücke nach eigenen Modellen, deren Messbeträge anders skaliert sind als im Bundesmodell. Ein Hebesatz ist nur innerhalb desselben Modells vergleichbar. <a href="{{ base }}ratgeber/grundsteuerreform-2025/">Modelle erklärt</a></p>
+<div class="ad-slot"><!-- ad: laender --></div>
+<ul class="list fee">{% for L in land_list|sort(attribute='med', reverse=True) %}<li><a href="{{ base }}{{ L.path }}"><span class="nm">{{ L.name }}<small class="rule">{{ L.modell }} · {{ L.min.b }}–{{ L.max.b }} % · {{ L.gem|length }} Gemeinden · {{ L.n_changed }} Änderungen 2025</small></span><span class="meta"><b>{{ L.med }} %</b><small>gewichtet {{ L.pw }} %</small></span></a></li>{% endfor %}</ul>
+{% endblock %}

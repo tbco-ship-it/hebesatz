@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block title %}{{ site }}{% endblock %}</title>
+<meta name="description" content="{% block description %}Grundsteuer-B-Hebesatz aller {{ '{:,}'.format(n_gem).replace(',', '.') }} deutschen Gemeinden nach der Grundsteuerreform 2025, mit Änderung gegenüber 2024, Vergleich im Bundesland und Rechner für Ihren Grundsteuerbescheid.{% endblock %}">
+<link rel="canonical" href="{{ origin }}{{ base }}{{ path }}">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preload" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css" onload="this.onload=null;this.rel='stylesheet'">
+<noscript><link rel="stylesheet" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css"></noscript>
+<link rel="stylesheet" href="{{ base }}static/style.css?v={{ v }}">
+<link rel="icon" href="{{ base }}static/favicon.svg?v={{ v }}" type="image/svg+xml">
+{% if adsense_pub %}<script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-{{ adsense_pub }}" crossorigin="anonymous"></script>{% endif %}
+{% block head %}{% endblock %}
+</head>
+<body>
+<header class="top">
+  <a class="brand" href="{{ base }}">Hebesatz<em>-Finder</em></a>
+  <nav>
+    <a href="{{ base }}">Gemeinde suchen</a>
+    <a href="{{ base }}bundeslaender/">Bundesländer</a>
+    <a href="{{ base }}ranking/grossstaedte/">Großstädte</a>
+    <a href="{{ base }}ratgeber/grundsteuerreform-2025/">Reform 2025</a>
+  </nav>
+</header>
+<main>
+{% block content %}{% endblock %}
+</main>
+<footer>
+  <p><a href="{{ base }}methodik/">Datenquelle & Methodik</a> · <a href="{{ base }}ratgeber/grundsteuer-berechnen/">Grundsteuer berechnen</a> · <a href="{{ base }}ratgeber/einspruch/">Einspruch</a> · <a href="{{ base }}impressum/">Impressum</a> · <a href="{{ base }}datenschutz/">Datenschutz</a> · <a href="{{ base }}kontakt/">Kontakt</a></p>
+  <p class="muted">Hebesätze aus der Regionaldatenbank Deutschland (Statistische Ämter des Bundes und der Länder, Stand 31.12.2024 bzw. Änderungen im 1. Halbjahr 2025). Maßgeblich ist die Hebesatzsatzung Ihrer Gemeinde und Ihr Grundsteuerbescheid.</p>
+</footer>
+<script src="{{ base }}static/ui.js?v={{ v }}" defer></script>
+</body>
+</html>

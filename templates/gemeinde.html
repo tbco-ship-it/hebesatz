@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Hebesatz {{ g.name }} 2025: Grundsteuer B {{ g.b }} %{% if g.changed_2025 and g.b2024 %} (vorher {{ g.b2024 }} %){% endif %} — Grundsteuer A, Gewerbesteuer & Rechner | {{ site }}{% endblock %}
+{% block description %}Grundsteuer-B-Hebesatz in {{ g.name }} ({{ L.name }}): {{ g.b }} % (Stand {{ g.stand }}){% if g.changed_2025 and g.b2024 %}, zur Grundsteuerreform 2025 von {{ g.b2024 }} % geändert{% endif %}. Rang {{ g.rank_land }} von {{ g.n_land }} im Land, Landesmedian {{ L.med }} %.{% if g.a2025 or g.a2022 %} Grundsteuer A {{ g.a2025 or g.a2022 }} %.{% endif %}{% if g.gew2025 or g.gew2022 %} Gewerbesteuer {{ g.gew2025 or g.gew2022 }} %.{% endif %} Grundsteuer aus Ihrem Messbetrag berechnen.{% endblock %}
+{% block head %}<script type="application/ld+json">{{ {"@context":"https://schema.org","@type":"Dataset","name":"Realsteuerhebesätze " ~ g.name,"description":"Hebesätze der Grundsteuer A, Grundsteuer B und Gewerbesteuer, Gemeindeschlüssel " ~ g.ags,"spatialCoverage":g.name ~ ", " ~ L.name,"creator":{"@type":"Organization","name":"Statistische Ämter des Bundes und der Länder"},"license":"https://www.govdata.de/dl-de/by-2-0","isBasedOn":source.url,"url":origin ~ base ~ path}|tojson }}</script>{% endblock %}
+{% block content %}
+<nav class="crumbs"><a href="{{ base }}">Start</a> › <a href="{{ base }}{{ L.path }}">{{ L.name }}</a> › {{ g.name }}</nav>
+<h1>Hebesatz {{ g.name }}</h1>
+<section class="sheet quiet" data-b="{{ g.b }}">
+  <p class="sheet-label">{{ g.name }}{% if g.suffix %}, {{ g.suffix }}{% endif %} · {{ L.name }}{% if g.ew %} · {{ '{:,}'.format(g.ew).replace(',', '.') }} Einwohner{% endif %}</p>
+  <div class="sheet-num"><span class="num">{{ g.b }} %</span><span class="pct">Grundsteuer B</span></div>
+  <p class="sheet-title">{% if g.changed_2025 and g.b2024 %}Zur Reform 2025 von {{ g.b2024 }} % auf {{ g.b2025 }} % geändert{% if g.b2025 > g.b2024 %} (+{{ ((g.b2025 - g.b2024) / g.b2024 * 100)|round|int }} %){% else %} ({{ ((g.b2025 - g.b2024) / g.b2024 * 100)|round|int }} %){% endif %}{% elif g.changed_2025 %}Neu festgesetzt im 1. Halbjahr 2025{% else %}Stand 31.12.2024 — keine Änderung im 1. Halbjahr 2025 gemeldet{% endif %}</p>
+  <p class="sheet-text">Rang {{ g.rank_land }} von {{ g.n_land }} Gemeinden in {{ L.name }} (Landesmedian {{ L.med }} %, bundesweit {{ de_med }} %). {{ L.modell }} — <a href="{{ base }}ratgeber/grundsteuerreform-2025/">was das für den Vergleich heißt</a>.</p>
+  <label class="field" style="margin-top:14px">Ihr Grundsteuermessbetrag (€)
+    <div class="money"><span class="unit">€</span><input id="mb" class="num-in" type="text" inputmode="decimal" placeholder="z. B. 85,20" aria-describedby="est"></div>
+  </label>
+  <p id="est" class="sheet-text"><b id="est-year">–</b> Grundsteuer im Jahr · <span id="est-q">–</span> je Quartal bei {{ g.b }} %. <span id="est-err" class="muted" hidden>Bitte einen Betrag wie 85,20 eingeben.</span></p>
+  <table class="tbl spec mini"><tbody>
+    <tr><th>Grundsteuer B</th><td>{{ g.b }} % <span class="muted">(Stand {{ g.stand }})</span></td></tr>
+    {% if g.b2024 and g.changed_2025 %}<tr><th>Grundsteuer B bis 2024</th><td>{{ g.b2024 }} %</td></tr>{% endif %}
+    {% if g.b2022 %}<tr><th>Grundsteuer B 2022</th><td>{{ g.b2022 }} %</td></tr>{% endif %}
+    {% if g.a2025 or g.a2022 %}<tr><th>Grundsteuer A</th><td>{{ g.a2025 or g.a2022 }} %{% if not g.a2025 %} <span class="muted">(2022)</span>{% endif %}</td></tr>{% endif %}
+    {% if g.c2025 %}<tr><th>Grundsteuer C (baureife Grundstücke)</th><td>{{ g.c2025 }} %</td></tr>{% endif %}
+    {% if g.gew2025 or g.gew2022 %}<tr><th>Gewerbesteuer</th><td>{{ g.gew2025 or g.gew2022 }} %{% if not g.gew2025 %} <span class="muted">(2022)</span>{% endif %}</td></tr>{% endif %}
+    <tr><th>Gemeindeschlüssel</th><td>{{ g.ags }}</td></tr>
+  </tbody></table>
+  <p class="sheet-actions"><a class="next" href="{{ base }}{{ L.path }}">Alle Gemeinden in {{ L.name }}</a><a class="next" href="{{ base }}ratgeber/einspruch/">Bescheid prüfen & Einspruch</a></p>
+</section>
+<div class="ad-slot"><!-- ad: gemeinde --></div>
+{% if near %}<div class="sec"><div class="sec-h"><h2>Nachbargemeinden im Kreis</h2></div>
+<ul class="list fee">{% for n in near %}<li><a href="{{ base }}{{ n.path }}"><span class="nm">{{ n.name }}<small class="rule">{% if n.ew %}{{ '{:,}'.format(n.ew).replace(',', '.') }} Einwohner · {% endif %}{% if n.changed_2025 and n.b2024 %}{{ n.b2024 }} → {{ n.b2025 }} %{% else %}Stand {{ n.stand }}{% endif %}</small></span><span class="meta"><b>{{ n.b }} %</b></span></a></li>{% endfor %}</ul></div>{% endif %}
+<section class="prose">
+  <h2>So rechnet die Gemeinde</h2>
+  <p>Grundsteuer = Grundsteuermessbetrag × Hebesatz ÷ 100. Bei einem Messbetrag von 85,20 € ergibt {{ g.b }} % eine Jahresgrundsteuer von {{ (85.2 * g.b / 100)|de(2) }} €, fällig in vier Raten (15. Februar, Mai, August, November) oder auf Antrag einmal jährlich am 1. Juli. Den Messbetrag finden Sie im Grundsteuermessbescheid des Finanzamts; gegen den Hebesatz selbst gibt es keinen Einspruch, nur gegen die Wertfeststellung und den Messbetrag. <a href="{{ base }}ratgeber/grundsteuer-berechnen/">Rechenweg im Detail</a></p>
+  <p class="muted small">Quelle: Regionaldatenbank Deutschland, Tabellen 71231-03-01-5 (Stand 31.12.2024) und 71231-02-01-5 (Änderungen 1. Halbjahr 2025), Abruf {{ source.fetched }}, dl-de/by-2-0. Änderungen ab Juli 2025 sind noch nicht enthalten — maßgeblich ist die Hebesatzsatzung der Gemeinde.</p>
+</section>
+<script src="{{ base }}static/app.js?v={{ v }}" defer></script>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Grundsteuer berechnen — Messbetrag × Hebesatz, Beispiel, Fälligkeit und was im Bescheid steht | {{ site }}{% endblock %}
+{% block description %}Schritt für Schritt vom Grundsteuermessbescheid zur Jahresgrundsteuer: Formel, Rechenbeispiel, Fälligkeitstermine, Umlage auf Mieter und typische Fehlerquellen.{% endblock %}
+{% block content %}
+<nav class="crumbs"><a href="{{ base }}">Start</a> › Grundsteuer berechnen</nav>
+<h1>Grundsteuer berechnen</h1>
+<div class="prose">
+<h2>Die Formel</h2>
+<p><b>Jahresgrundsteuer = Grundsteuermessbetrag × Hebesatz ÷ 100.</b> Beispiel: Messbetrag 85,20 €, Hebesatz 750 % → 85,20 × 7,5 = 639,00 € im Jahr, also 159,75 € je Quartal.</p>
+<h2>Wo der Messbetrag steht</h2>
+<p>Im <b>Grundsteuermessbescheid</b> des Finanzamts (nicht zu verwechseln mit dem Grundsteuerwertbescheid, der den Wert ausweist, und dem Grundsteuerbescheid der Gemeinde, der die Steuer festsetzt). Im Bundesmodell ist er Grundsteuerwert × 0,31 ‰ (Wohnen) bzw. 0,34 ‰; für Ein- und Zweifamilienhäuser, Mietwohngrundstücke und Wohnungseigentum gilt zusätzlich ein Abschlag von 30 % auf die Messzahl — der ist in den 0,31 ‰ bereits enthalten.</p>
+<h2>Fälligkeit</h2>
+<p>Je ein Viertel am 15. Februar, 15. Mai, 15. August und 15. November. Kleinbeträge bis 30 € werden am 15. August in einem Betrag fällig, bis 15 € am 15. Februar. Auf Antrag bis 30. September des Vorjahres zahlen Sie den Jahresbetrag einmalig am 1. Juli.</p>
+<h2>Umlage auf Mieter</h2>
+<p>Die Grundsteuer ist nach § 2 Nr. 1 Betriebskostenverordnung umlagefähig. Steigt sie durch die Reform, darf der Vermieter die Erhöhung mit der nächsten Betriebskostenabrechnung weitergeben; Nachforderungen für 2025 kommen daher meist erst 2026 an.</p>
+<h2>Typische Fehler</h2>
+<ul>
+<li>Hebesatz aus dem Vorjahr verwendet — 2025 haben die meisten Gemeinden geändert.</li>
+<li>Alten Einheitswert-Messbetrag mit neuem Hebesatz kombiniert — beide Größen stammen aus verschiedenen Systemen.</li>
+<li>Differenzierten Hebesatz übersehen — in NRW, SH, SN und SL kann für Wohngrundstücke ein anderer Satz gelten als für Gewerbe.</li>
+</ul>
+</div>
+{% endblock %}

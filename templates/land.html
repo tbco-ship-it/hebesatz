@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Hebesätze Grundsteuer B in {{ L.name }} 2025 — alle {{ L.gem|length }} Gemeinden, Median {{ L.med }} % | {{ site }}{% endblock %}
+{% block description %}Grundsteuer-B-Hebesatz aller {{ L.gem|length }} Gemeinden in {{ L.name }}: von {{ L.min.b }} % ({{ L.min.name }}) bis {{ L.max.b }} % ({{ L.max.name }}), Median {{ L.med }} %, einwohnergewichtet {{ L.pw }} %. {{ L.n_changed }} Gemeinden haben den Satz im 1. Halbjahr 2025 geändert. Modell: {{ L.modell }}.{% endblock %}
+{% block content %}
+<nav class="crumbs"><a href="{{ base }}">Start</a> › <a href="{{ base }}bundeslaender/">Bundesländer</a> › {{ L.name }}</nav>
+<h1>Hebesätze in {{ L.name }}</h1>
+<section class="sheet quiet">
+  <p class="sheet-label">{{ L.name }} · {{ L.gem|length }} Gemeinden · {{ L.modell }}</p>
+  <div class="sheet-num"><span class="num">{{ L.med }} %</span><span class="pct">Median Grundsteuer B</span></div>
+  <p class="sheet-title">Von {{ L.min.b }} % ({{ L.min.name }}) bis {{ L.max.b }} % ({{ L.max.name }}) · einwohnergewichtet {{ L.pw }} %</p>
+  <p class="sheet-text">{{ L.n_changed }} Gemeinden haben den Hebesatz im 1. Halbjahr 2025 geändert. Bundesweiter Median {{ de_med }} %.</p>
+</section>
+<div class="ad-slot"><!-- ad: land --></div>
+{% if L.big %}<div class="sec"><div class="sec-h"><h2>Städte ab 20.000 Einwohner</h2></div>
+<ul class="list fee">{% for g in L.big %}<li><a href="{{ base }}{{ g.path }}"><span class="nm">{{ g.name }}<small class="rule">{{ '{:,}'.format(g.ew).replace(',', '.') }} Einwohner{% if g.changed_2025 and g.b2024 %} · {{ g.b2024 }} → {{ g.b2025 }} %{% endif %}</small></span><span class="meta"><b>{{ g.b }} %</b></span></a></li>{% endfor %}</ul></div>{% endif %}
+<div class="sec"><div class="sec-h"><h2>Alle Gemeinden, höchster Hebesatz zuerst</h2></div>
+<ul class="list fee">{% for g in L.gem %}<li><a href="{{ base }}{{ g.path }}"><span class="nm">{{ g.name }}{% if g.suffix %} <small>{{ g.suffix }}</small>{% endif %}</span><span class="meta"><b>{{ g.b }} %</b>{% if g.changed_2025 and g.b2024 %}<small>vorher {{ g.b2024 }}</small>{% endif %}</span></a></li>{% endfor %}</ul></div>
+{% endblock %}
